@@ -12,6 +12,15 @@ server.listen(process.env.PORT || 5000, () => {
     console.log("server is running...");
 });
 
+let cloudinary = require('cloudinary');
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+const jimp = require('jimp');
+
+
 // ルーター設定
 server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     res.sendStatus(200);
@@ -24,7 +33,10 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
             if (event.message.text == "よろしく"){
                 //スクショ保存、cloudinaryヘアップ
                 screenshot();
-                let url = upload('out.jpg');
+                upload('./out.png');
+
+                let url = cloudinary.v2.url("out.jpg", {secure: true});
+
                 events_processed.push(bot.replyMessage(event.replyToken, {
                     type: "image",
                     originalContentUrl: url,
@@ -63,7 +75,7 @@ function screenshot() {
         .wait('table.ticket_infomation_box')
         // チケット販売状況テーブルのスクショ
         .screenshotSelector('table.ticket_infomation_box')
-        .result((jpg) => fs.writeFileSync('out.jpg', jpg))
+        .result((img) => fs.writeFileSync('out.png', img))
         .end((e) => console.log(e))
         .catch((e) => {
             console.log(e)
@@ -71,18 +83,19 @@ function screenshot() {
         .then(() => chromy.close());
 }
 
-function upload(jpg) {
+function upload(img) {
 
-    let cloudinary = require('cloudinary');
-    cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
+    jimp.read(img, (err, lenna) => {
+        if (err) throw err;
+        lenna
+            .resize(300, 229) // resize
+            .quality(60) // set JPEG quality
+            .greyscale() // set greyscale
+            .write('out.jpg'); // save
     });
 
-    cloudinary.uploader.upload(jpg, function(result) {
+    cloudinary.uploader.upload('out.jpg', function(result) {
         console.log(result)
-        return result.secure_url;
     });
 }
 
