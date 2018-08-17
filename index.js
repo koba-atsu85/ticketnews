@@ -40,12 +40,6 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                     originalContentUrl: url,
                     previewImageUrl: url
                 }));
-
-            } else {
-                events_processed.push(bot.replyMessage(event.replyToken, {
-                    type: "text",
-                    text: "頑張るんやでー"
-                }));
             }
         }
     });
