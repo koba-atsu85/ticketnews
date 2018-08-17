@@ -1,3 +1,4 @@
+"use strict";
 
 const server = require("express")();
 const line = require("@line/bot-sdk");
@@ -7,7 +8,9 @@ const line_config = {
 };
 const bot = new line.Client(line_config);
 
-server.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 5000, () => {
+    console.log("server is running...");
+});
 
 // ルーター設定
 server.post('/webhook', line.middleware(line_config), (req, res, next) => {
