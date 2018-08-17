@@ -40,15 +40,11 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                     originalContentUrl: url,
                     previewImageUrl: url
                 }));
-                events_processed.push(bot.replyMessage(event.replyToken, {
-                    type: "text",
-                    text: "もしくはここから確認してな。https://ticketpay.jp/adminroom/"
-                }));
 
             } else {
                 events_processed.push(bot.replyMessage(event.replyToken, {
                     type: "text",
-                    text: "頑張るんやで"
+                    text: "頑張るんやでー"
                 }));
             }
         }
