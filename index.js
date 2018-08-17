@@ -86,7 +86,7 @@ function screenshot() {
         .then(() => {
             chromy.close();
             // 取得できたらアップロード
-            upload('./out.png');
+            upload('out.png');
         });
 }
 
