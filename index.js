@@ -18,7 +18,6 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
-const jimp = require('jimp');
 
 
 // ルーター設定
@@ -84,6 +83,7 @@ function screenshot() {
 }
 
 function upload(img) {
+    let jimp = require('jimp');
 
     jimp.read(img, (err, lenna) => {
         if (err) throw err;
