@@ -1,0 +1,86 @@
+
+const server = require("express")();
+const line = require("@line/bot-sdk");
+const line_config = {
+    channelAccessToken: process.env.LINE_ACCESS_TOKEN,
+    channelSecret: process.env.LINE_CHANNEL_SECRET
+};
+const bot = new line.Client(line_config);
+
+server.listen(process.env.PORT || 3000);
+
+// ルーター設定
+server.post('/webhook', line.middleware(line_config), (req, res, next) => {
+    res.sendStatus(200);
+    let events_processed = [];
+
+    req.body.events.forEach((event) => {
+        // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
+        if (event.type == "message" && event.message.type == "text"){
+            // ユーザーからのテキストメッセージが「よろしく」だった場合のみ反応。
+            if (event.message.text == "よろしく"){
+                //スクショ保存、cloudinaryヘアップ
+                screenshot();
+                let url = upload('out.jpg');
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "image",
+                    originalContentUrl: url,
+                    previewImageUrl: url
+                }));
+            } else {
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "text",
+                    text: "へいへい"
+                }));
+            }
+        }
+    });
+    // すべてのイベント処理が終了したら何個のイベントが処理されたか出力。
+    Promise.all(events_processed).then(
+        (response) => {
+            console.log(`${response.length} event(s) processed.`);
+        }
+    );
+});
+
+
+const Chromy = require('chromy');
+const fs = require('fs');
+const url = 'https://ticketpay.jp/store/login.php';
+const login_id = process.env.LOGIN_ID;
+const pass = process.env.PASSWORD;
+const chromy = new Chromy();
+
+function screenshot() {
+    chromy.chain()
+        .goto(url)
+        .insert('input[name=login_id]', login_id)
+        .insert('input[type=password]', pass)
+        .click('input[type=submit]', {waitLoadEvent: false})
+        .wait('table.ticket_infomation_box')
+        // チケット販売状況テーブルのスクショ
+        .screenshotSelector('table.ticket_infomation_box')
+        .result((jpg) => fs.writeFileSync('out.jpg', jpg))
+        .end((e) => console.log(e))
+        .catch((e) => {
+            console.log(e)
+        })
+        .then(() => chromy.close());
+}
+
+function upload(jpg) {
+
+    let cloudinary = require('cloudinary');
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+
+    cloudinary.uploader.upload(jpg, function(result) {
+        console.log(result)
+        return result.secure_url;
+    });
+}
+
+

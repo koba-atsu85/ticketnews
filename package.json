@@ -1,0 +1,23 @@
+{
+  "name": "ticket_info",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@line/bot-sdk": "^6.2.0",
+    "casperjs": "^1.1.4",
+    "cheerio": "^0.22.0",
+    "cheerio-tableparser": "^1.0.1",
+    "chromy": "^0.5.11",
+    "cloudinary": "^1.11.0",
+    "express": "^4.16.3",
+    "phantomjs": "^2.1.7",
+    "spooky": "^0.2.5"
+  }
+}
