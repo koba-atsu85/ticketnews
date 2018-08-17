@@ -28,11 +28,10 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     req.body.events.forEach((event) => {
         // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
         if (event.type == "message" && event.message.type == "text"){
-            // ユーザーからのテキストメッセージが「よろしく」だった場合のみ反応。
+            // ユーザーからのテキストメッセージが「🍺」だった場合のみ反応。
             if (event.message.text == "🍺"){
                 //スクショ保存、cloudinaryヘアップ
                 screenshot();
-                upload('./out.png');
 
                 let url = cloudinary.v2.url("out.jpg", {secure: true});
 
@@ -41,10 +40,15 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                     originalContentUrl: url,
                     previewImageUrl: url
                 }));
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "text",
+                    text: "もしくはここから確認してな。https://ticketpay.jp/adminroom/"
+                }));
+
             } else {
                 events_processed.push(bot.replyMessage(event.replyToken, {
                     type: "text",
-                    text: "へいへい"
+                    text: "頑張るんやで"
                 }));
             }
         }
@@ -79,7 +83,11 @@ function screenshot() {
         .catch((e) => {
             console.log(e)
         })
-        .then(() => chromy.close());
+        .then(() => {
+            chromy.close();
+            // 取得できたらアップロード
+            upload('./out.png');
+        });
 }
 
 function upload(img) {
@@ -94,7 +102,7 @@ function upload(img) {
             .write('out.jpg'); // save
     });
 
-    cloudinary.uploader.upload('out.jpg', function(result) {
+    cloudinary.uploader.upload('out.jpg', {public_id: "out"}, function(result) {
         console.log(result)
     });
 }
