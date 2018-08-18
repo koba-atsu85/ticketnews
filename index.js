@@ -91,8 +91,8 @@ function upload(img) {
             .greyscale() // set greyscale
             .write('./out.jpg'); // save
 
-        // CDNキャッシュ対策。消してからアップ
-        cloudinary.v2.uploader.destroy('out', {invalidate: true }, function(error, result){console.log(result, error)});
+        // 一旦削除しない
+        // cloudinary.v2.uploader.destroy('out', {invalidate: true }, function(error, result){console.log(result, error)});
 
         cloudinary.v2.uploader.upload('./out.jpg', {public_id: "out", invalidate: true}, function(error, result) {
             console.log(result);
