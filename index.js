@@ -54,7 +54,7 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
 
 const Chromy = require('chromy');
 const fs = require('fs');
-const url = 'https://ticketpay.jp/store/login.php';
+const url = process.env.LOGIN_URL;
 const login_id = process.env.LOGIN_ID;
 const pass = process.env.PASSWORD;
 const chromy = new Chromy();
