@@ -81,19 +81,26 @@ function screenshot() {
 }
 
 function upload(img) {
+
     let jimp = require('jimp');
 
-    jimp.read(img, (err, lenna) => {
-        if (err) throw err;
+    jimp.read(img).then(function (lenna) {
         lenna
             .resize(300, 229) // resize
             .quality(60) // set JPEG quality
             .greyscale() // set greyscale
-            .write('out.jpg'); // save
-    });
+            .write('./out.jpg'); // save
 
-    cloudinary.uploader.upload('out.jpg', {public_id: "out"}, function(result) {
-        console.log(result)
+        // CDNキャッシュ対策。消してからアップ
+        cloudinary.v2.uploader.destroy('out', {invalidate: true }, function(error, result){console.log(result, error)});
+
+        cloudinary.v2.uploader.upload('./out.jpg', {public_id: "out", invalidate: true}, function(error, result) {
+            console.log(result);
+            console.log(error);
+        });
+
+    }).catch(function (err) {
+        throw err;
     });
 }
 
