@@ -1,6 +1,8 @@
 "use strict";
 
 const server = require("express")();
+const express = require('express');
+
 const line = require("@line/bot-sdk");
 const line_config = {
     channelAccessToken: process.env.LINE_ACCESS_TOKEN,
@@ -24,6 +26,7 @@ cloudinary.config({
 server.get('/', function(req, res) {
     res.send('hello world');
 });
+server.use('/', express.static(__dirname + './public'));
 
 server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     res.sendStatus(200);
