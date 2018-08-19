@@ -1,8 +1,6 @@
 "use strict";
 
 const server = require("express")();
-const express = require('express');
-
 const line = require("@line/bot-sdk");
 const line_config = {
     channelAccessToken: process.env.LINE_ACCESS_TOKEN,
@@ -23,10 +21,10 @@ cloudinary.config({
 
 
 // ルーター設定
-server.get('/', function(req, res) {
-    res.send('hello world');
-});
-server.use('/', express.static(__dirname + './public'));
+// server.get('/', function(req, res) {
+//     res.send('hello world');
+// });
+// server.use('/', express.static('./public'));
 
 server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     res.sendStatus(200);
@@ -41,17 +39,12 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                 screenshot();
 
                 // urlを取得
-                fs.readFile('./latest.txt', 'utf8', function (err, data) {
-                    if (err) throw err;
-                    console.log(data);
-
-                    events_processed.push(bot.replyMessage(event.replyToken, {
-                        type: "image",
-                        originalContentUrl: url,
-                        previewImageUrl: url
-                    }));
-
-                });
+                let url = fs.readFileSync('./latest.txt', 'utf8');
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "image",
+                    originalContentUrl: url,
+                    previewImageUrl: url
+                }));
 
             }
         }
@@ -107,7 +100,7 @@ function upload(img) {
 
         cloudinary.v2.uploader.upload('./out.jpg', {public_id: "out", invalidate: true}, function(error, result) {
             console.log(result);
-            fs.writeFile('./latest.txt', result.secure_url, function (err) { if (err) throw err; });
+            fs.writeFileSync('./latest.txt', result.secure_url, function (err) { if (err) throw err; });
         });
 
     }).catch(function (err) {
