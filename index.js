@@ -34,7 +34,7 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
         // この処理の対象をイベントタイプがメッセージで、かつ、テキストタイプだった場合に限定。
         if (event.type == "message" && event.message.type == "text"){
             // ユーザーからのテキストメッセージが「🍺」だった場合のみ反応。
-            if (event.message.text == "🍺"){
+            if (event.message.text == "🍺") {
                 //スクショ保存、cloudinaryヘアップ
                 screenshot();
 
@@ -46,6 +46,11 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                     previewImageUrl: url
                 }));
 
+            } else if(event.message.text == "機材リスト") {
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "text",
+                    text: "機材リストはここやで。\n https://docs.google.com/spreadsheets/d/1izMeOgj8qeSwoOuNYHptwYU3Kbd1-K2owHwMLUWdLbI/edit#gid=878262081"
+                }));
             }
         }
     });
