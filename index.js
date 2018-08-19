@@ -86,9 +86,9 @@ function upload(img) {
 
     jimp.read(img).then(function (lenna) {
         lenna
-            .resize(300, 229) // resize
-            .quality(60) // set JPEG quality
-            .greyscale() // set greyscale
+            // .resize(300, 229) // resize
+            .quality(100) // set JPEG quality
+            // .greyscale() // set greyscale
             .write('./out.jpg'); // save
 
         // 一旦削除しない
