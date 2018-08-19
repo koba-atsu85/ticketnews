@@ -33,13 +33,19 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                 //スクショ保存、cloudinaryヘアップ
                 screenshot();
 
-                let url = cloudinary.v2.url("out.jpg", {secure: true});
+                // urlを取得
+                fs.readFile('./latest.txt', 'utf8', function (err, data) {
+                    if (err) throw err;
+                    console.log(data);
 
-                events_processed.push(bot.replyMessage(event.replyToken, {
-                    type: "image",
-                    originalContentUrl: url,
-                    previewImageUrl: url
-                }));
+                    events_processed.push(bot.replyMessage(event.replyToken, {
+                        type: "image",
+                        originalContentUrl: url,
+                        previewImageUrl: url
+                    }));
+
+                });
+
             }
         }
     });
@@ -77,6 +83,7 @@ function screenshot() {
             chromy.close();
             // 取得できたらアップロード
             upload('out.png');
+
         });
 }
 
@@ -91,12 +98,9 @@ function upload(img) {
             // .greyscale() // set greyscale
             .write('./out.jpg'); // save
 
-        // 一旦削除しない
-        // cloudinary.v2.uploader.destroy('out', {invalidate: true }, function(error, result){console.log(result, error)});
-
         cloudinary.v2.uploader.upload('./out.jpg', {public_id: "out", invalidate: true}, function(error, result) {
             console.log(result);
-            console.log(error);
+            fs.writeFile('./latest.txt', result.secure_url, function (err) { if (err) throw err; });
         });
 
     }).catch(function (err) {
