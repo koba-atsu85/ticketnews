@@ -21,6 +21,10 @@ cloudinary.config({
 
 
 // ルーター設定
+server.get('/', function(req, res) {
+    res.send('hello world');
+});
+
 server.post('/webhook', line.middleware(line_config), (req, res, next) => {
     res.sendStatus(200);
     let events_processed = [];
