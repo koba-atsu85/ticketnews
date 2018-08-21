@@ -39,7 +39,7 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                 screenshot();
 
                 // urlを取得
-                let url = = cloudinary.v2.url("out.jpg", {secure: true});
+                let url = cloudinary.v2.url("out.jpg", {secure: true});
                 // let url = fs.readFileSync('./latest.txt', 'utf8');
                 events_processed.push(bot.replyMessage(event.replyToken, {
                     type: "image",
