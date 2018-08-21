@@ -51,6 +51,11 @@ server.post('/webhook', line.middleware(line_config), (req, res, next) => {
                     type: "text",
                     text: "機材リストはここやで。\n https://docs.google.com/spreadsheets/d/1izMeOgj8qeSwoOuNYHptwYU3Kbd1-K2owHwMLUWdLbI/edit#gid=878262081"
                 }));
+            } else if(event.message.text == "タイムテーブル") {
+                events_processed.push(bot.replyMessage(event.replyToken, {
+                    type: "text",
+                    text: "タームテーブルはここや。\n ここに複数あるで。 \n https://drive.google.com/drive/folders/0B8VKy5ZDXUYTZmhMdV8yWlplZEU?usp=sharing"
+                }));
             }
         }
     });
